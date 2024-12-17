@@ -1,0 +1,707 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Move out of download targets to make use of differnt deployment more easy -->
+  <!-- This is used for MSI Download -->
+
+  <Target Name="DownloadDesktopFramework">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirDesktopFramework)</DownloadDir>
+      <MSIName>$(DesktopFrameWorkMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionDesktopFramework)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(DesktopMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <DesktopFrameworkServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</DesktopFrameworkServerEqualsDownloadedMSI>
+      <DesktopFrameworkMSIFileVersion>$(MSIFileVersion)</DesktopFrameworkMSIFileVersion>
+      <DesktopFrameworkMSIFileIsSigned>$(MSIIsSigned)</DesktopFrameworkMSIFileIsSigned>
+      <DesktopFrameworkMSIFileVerification>$(MSIVerificationSuccess)</DesktopFrameworkMSIFileVerification>
+      <DesktopFrameworkMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</DesktopFrameworkMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadClientOCR">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirClientOCR)</DownloadDir>
+      <MSIName>$(ClientOCRMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionClientOCR)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(ClientOcrMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <ClientOCRServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</ClientOCRServerEqualsDownloadedMSI>
+      <ClientOCRMSIFileVersion>$(MSIFileVersion)</ClientOCRMSIFileVersion>
+      <ClientOCRMSIFileIsSigned>$(MSIIsSigned)</ClientOCRMSIFileIsSigned>
+      <ClientOCRMSIFileVerification>$(MSIVerificationSuccess)</ClientOCRMSIFileVerification>
+      <ClientOCRMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</ClientOCRMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadUpdate">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirUpdate)</DownloadDir>
+      <MSIName>$(UpdateMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionUpdate)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(UpdateMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <UpdateServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</UpdateServerEqualsDownloadedMSI>
+      <UpdateMSIFileVersion>$(MSIFileVersion)</UpdateMSIFileVersion>
+      <UpdateMSIFileIsSigned>$(MSIIsSigned)</UpdateMSIFileIsSigned>
+      <UpdateMSIFileVerification>$(MSIVerificationSuccess)</UpdateMSIFileVerification>
+      <UpdateMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</UpdateMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <Target Name="DownloadC2Outlook">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirC2Outlook)</DownloadDir>
+      <MSIName>$(C2OutlookMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionC2Outlook)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(C2OutlookMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <C2OutlookServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</C2OutlookServerEqualsDownloadedMSI>
+      <C2OutlookMSIFileVersion>$(MSIFileVersion)</C2OutlookMSIFileVersion>
+      <C2OutlookMSIFileIsSigned>$(MSIIsSigned)</C2OutlookMSIFileIsSigned>
+      <C2OutlookMSIFileVerification>$(MSIVerificationSuccess)</C2OutlookMSIFileVerification>
+      <C2OutlookMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</C2OutlookMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadEditSend">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirEditSend)</DownloadDir>
+      <MSIName>$(EditSendMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionEditSend)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(EditSendMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <EditSendServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</EditSendServerEqualsDownloadedMSI>
+      <EditSendMSIFileVersion>$(MSIFileVersion)</EditSendMSIFileVersion>
+      <EditSendMSIFileIsSigned>$(MSIIsSigned)</EditSendMSIFileIsSigned>
+      <EditSendMSIFileVerification>$(MSIVerificationSuccess)</EditSendMSIFileVerification>
+      <EditSendMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</EditSendMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadAdminTool">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirAdminTool)</DownloadDir>
+      <MSIName>$(AdminToolMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionAdminTool)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(AdminToolMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <AdminToolServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</AdminToolServerEqualsDownloadedMSI>
+      <AdminToolMSIFileVersion>$(MSIFileVersion)</AdminToolMSIFileVersion>
+      <AdminToolMSIFileIsSigned>$(MSIIsSigned)</AdminToolMSIFileIsSigned>
+      <AdminToolMSIFileVerification>$(MSIVerificationSuccess)</AdminToolMSIFileVerification>
+      <AdminToolMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</AdminToolMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadScanner">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirScanner)</DownloadDir>
+      <MSIName>$(ScannerMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionScanner)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(ScannerMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <ScannerServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</ScannerServerEqualsDownloadedMSI>
+      <ScannerMSIFileVersion>$(MSIFileVersion)</ScannerMSIFileVersion>
+      <ScannerMSIFileIsSigned>$(MSIIsSigned)</ScannerMSIFileIsSigned>
+      <ScannerMSIFileVerification>$(MSIVerificationSuccess)</ScannerMSIFileVerification>
+      <ScannerMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</ScannerMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadExport">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirExport)</DownloadDir>
+      <MSIName>$(ExportMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionExport)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(ExportMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <ExportServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</ExportServerEqualsDownloadedMSI>
+      <ExportMSIFileVersion>$(MSIFileVersion)</ExportMSIFileVersion>
+      <ExportMSIFileIsSigned>$(MSIIsSigned)</ExportMSIFileIsSigned>
+      <ExportMSIFileVerification>$(MSIVerificationSuccess)</ExportMSIFileVerification>
+      <ExportMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</ExportMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadImport">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirImport)</DownloadDir>
+      <MSIName>$(ImportMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionImport)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(ImportMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <ImportServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</ImportServerEqualsDownloadedMSI>
+      <ImportMSIFileVersion>$(MSIFileVersion)</ImportMSIFileVersion>
+      <ImportMSIFileIsSigned>$(MSIIsSigned)</ImportMSIFileIsSigned>
+      <ImportMSIFileVerification>$(MSIVerificationSuccess)</ImportMSIFileVerification>
+      <ImportMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</ImportMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadPrinter">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirPrinter)</DownloadDir>
+      <MSIName>$(PrinterMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionPrinter)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(PrinterMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <PrinterServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</PrinterServerEqualsDownloadedMSI>
+      <PrinterMSIFileVersion>$(MSIFileVersion)</PrinterMSIFileVersion>
+      <PrinterMSIFileIsSigned>$(MSIIsSigned)</PrinterMSIFileIsSigned>
+      <PrinterMSIFileVerification>$(MSIVerificationSuccess)</PrinterMSIFileVerification>
+      <PrinterMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</PrinterMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadSmartConnect">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirSmartConnect)</DownloadDir>
+      <MSIName>$(SmartConnectMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionSmartConnect)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(SmartConnectMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <SmartConnectServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</SmartConnectServerEqualsDownloadedMSI>
+      <SmartConnectMSIFileVersion>$(MSIFileVersion)</SmartConnectMSIFileVersion>
+      <SmartConnectMSIFileIsSigned>$(MSIIsSigned)</SmartConnectMSIFileIsSigned>
+      <SmartConnectMSIFileVerification>$(MSIVerificationSuccess)</SmartConnectMSIFileVerification>
+      <SmartConnectMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</SmartConnectMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadWEC">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirWEC)</DownloadDir>
+      <MSIName>$(WECMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionWEC)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(WECMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <WECServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</WECServerEqualsDownloadedMSI>
+      <WECMSIFileVersion>$(MSIFileVersion)</WECMSIFileVersion>
+      <WECMSIFileIsSigned>$(MSIIsSigned)</WECMSIFileIsSigned>
+      <WECMSIFileVerification>$(MSIVerificationSuccess)</WECMSIFileVerification>
+      <WECMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</WECMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadWECServer">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirWECServer)</DownloadDir>
+      <MSIName>$(WECServerMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionWECServer)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(WECServerMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <WECServerServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</WECServerServerEqualsDownloadedMSI>
+      <WECServerMSIFileVersion>$(MSIFileVersion)</WECServerMSIFileVersion>
+      <WECServerMSIFileIsSigned>$(MSIIsSigned)</WECServerMSIFileIsSigned>
+      <WECServerMSIFileVerification>$(MSIVerificationSuccess)</WECServerMSIFileVerification>
+      <WECServerMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</WECServerMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadWorkflowDesigner">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirWorkflowDesigner)</DownloadDir>
+      <MSIName>$(WorkflowDesignerMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionWorkflowDesigner)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(WorkflowDesignerMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <WorkflowDesignerServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</WorkflowDesignerServerEqualsDownloadedMSI>
+      <WorkflowDesignerMSIFileVersion>$(MSIFileVersion)</WorkflowDesignerMSIFileVersion>
+      <WorkflowDesignerMSIFileIsSigned>$(MSIIsSigned)</WorkflowDesignerMSIFileIsSigned>
+      <WorkflowDesignerMSIFileVerification>$(MSIVerificationSuccess)</WorkflowDesignerMSIFileVerification>
+      <WorkflowDesignerMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</WorkflowDesignerMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadUrlCreator">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirUrlCreator)</DownloadDir>
+      <MSIName>$(UrlCreatorMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionUrlCreator)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(UrlCreatorMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <UrlCreatorServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</UrlCreatorServerEqualsDownloadedMSI>
+      <UrlCreatorMSIFileVersion>$(MSIFileVersion)</UrlCreatorMSIFileVersion>
+      <UrlCreatorMSIFileIsSigned>$(MSIIsSigned)</UrlCreatorMSIFileIsSigned>
+      <UrlCreatorMSIFileVerification>$(MSIVerificationSuccess)</UrlCreatorMSIFileVerification>
+      <UrlCreatorMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</UrlCreatorMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadLocalDataConnector">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirLocalDataConnector)</DownloadDir>
+      <MSIName>$(LocalDataConnectorMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionLocalDataConnector)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(LocalDataConnectorMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <LocalDataConnectorServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</LocalDataConnectorServerEqualsDownloadedMSI>
+      <LocalDataConnectorMSIFileVersion>$(MSIFileVersion)</LocalDataConnectorMSIFileVersion>
+      <LocalDataConnectorMSIFileIsSigned>$(MSIIsSigned)</LocalDataConnectorMSIFileIsSigned>
+      <LocalDataConnectorMSIFileVerification>$(MSIVerificationSuccess)</LocalDataConnectorMSIFileVerification>
+      <LocalDataConnectorMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</LocalDataConnectorMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="DownloadUserSynchronization">
+    <!--Variables to be set per Module-->
+    <PropertyGroup>
+      <DownloadDir>$(DownloadDirUserSynchronization)</DownloadDir>
+      <MSIName>$(UserSynchronizationMSIName)</MSIName>
+      <ServerVersion>$(ServerVersionUserSynchronization)</ServerVersion>
+    </PropertyGroup>
+    <!--No changes required afterwards-->
+    <MakeDir Directories='$(DownloadDir)' ContinueOnError="ErrorAndContinue" Condition="!Exists('$(DownloadDir)')" />
+    <DownloadMSI MsiUrl="$(UserSynchronizationMsiUrl)" ModuleName="$(MSIName)" DownloadFolder="$(DownloadDir)" Condition="!Exists('$(DownloadDir)\$(MSIName)')" ContinueOnError="ErrorAndContinue" />
+    <LocalMsiVersion MSIPath="$(DownloadDir)" MSIName="$(MSIName)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="MSIFileVersion" PropertyName="MSIFileVersion" />
+    </LocalMsiVersion>
+    <VersionCompare FirstVersion="$(MSIFileVersion)" Operator="Equals" SecondVersion="$(ServerVersion)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="CompareResult" PropertyName="ServerEqualsDownloadedMSI" />
+    </VersionCompare>
+    <DWMessage Text="A wrong version of the '$(MSIName)' was downloaded. Please contact your Administrator. Expected Version: $(ServerVersion). Downloaded Version: $(MSIFileVersion)."
+               StringId="WrongMsiVersionDownloaded" Param1="$(MSIName)" Param2="$(ServerVersion)" Param3="$(MSIFileVersion)" Level="Error"
+               Condition="'$(ServerEqualsDownloadedMSI)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DigitalFileSignatureVerification FileName="$(DownloadDir)\$(MSIName)" ThumbprintString="$(DocuWareThumbprintString)" ContinueOnError="ErrorAndContinue">
+      <Output TaskParameter="IsSigned" PropertyName="MSIIsSigned" />
+      <Output TaskParameter="SignatureIsValid" PropertyName="MSIVerificationSuccess" />
+      <Output TaskParameter="ThumbprintIsValid" PropertyName="MSIThumbprintVerificationSuccess" />
+    </DigitalFileSignatureVerification>
+    <DWMessage Text="The MSI file '$(MSIName)' does not have a digital signature. Please contact your Administrator." StringId="MsiFileNotSigned" Param1="$(MSIName)" Level="Error"
+            Condition="'$(MSIIsSigned)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The MSI file '$(MSIName)' has an invalid digital signature. Please contact your Administrator." StringId="MsiFileInvalidSignature" Param1="$(MSIName)" Level="Error"
+         Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <DWMessage Text="The setup is not able to continue because a file not signed by DocuWare has been found. Please contact your administrator." StringId="MsiFileThumbprintMissing" Param1="$(MSIName)" Level="Error"
+       Condition="'$(MSIIsSigned)'=='True' AND '$(MSIVerificationSuccess)'=='True' AND '$(MSIThumbprintVerificationSuccess)'!='True'" ContinueOnError="ErrorAndContinue" />
+    <Delete Files="$(DownloadDir)\$(MSIName)" Condition="(Exists('$(DownloadDir)\$(MSIName)')) AND ( ('$(ServerEqualsDownloadedMSI)'!='True') OR ('$(MSIVerificationSuccess)'!='True')  OR ('$(MSIThumbprintVerificationSuccess)'!='True') )" ContinueOnError="ErrorAndContinue" />
+    <!--Variables set to be used afterwards-->
+    <PropertyGroup>
+      <UserSynchronizationServerEqualsDownloadedMSI>$(ServerEqualsDownloadedMSI)</UserSynchronizationServerEqualsDownloadedMSI>
+      <UserSynchronizationMSIFileVersion>$(MSIFileVersion)</UserSynchronizationMSIFileVersion>
+      <UserSynchronizationMSIFileIsSigned>$(MSIIsSigned)</UserSynchronizationMSIFileIsSigned>
+      <UserSynchronizationMSIFileVerification>$(MSIVerificationSuccess)</UserSynchronizationMSIFileVerification>
+      <UserSynchronizationMSIFileThumbprintVerification>$(MSIThumbprintVerificationSuccess)</UserSynchronizationMSIFileThumbprintVerification>
+    </PropertyGroup>
+  </Target>
+</Project>

@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>DocuWare.Setup.Client.Cmd.exe</title>
+</head>
+<body>
+    <h1>DocuWare.Setup.Client.Cmd.exe</h1>
+    This utility enables you to install DocuWare Client Applications in an automated or silent way.
+    <h2>Prerequisites</h2>
+    <ul>
+        <li>You need to have Microsoft .NET 4.7.2 or higher installed on the target environment.</li>
+        <li>All other DocuWare prerequisites (like C++ runtimes) are automatically installed by DocuWare.Setup.Client.Cmd.exe</li>
+    </ul>
+    This utility can be used with DocuWare 6.8 or above. A new version will be provided with each release.
+    <h2>Further information</h2>
+    For more information run one of the following commands:
+    <ul>
+        <li><pre>DocuWare.Setup.Client.Cmd.exe help</pre></li>
+        <li><pre>DocuWare.Setup.Client.Cmd.exe help install</pre></li>
+        <li><pre>DocuWare.Setup.Client.Cmd.exe help uninstall</pre></li>
+        <li><pre>DocuWare.Setup.Client.Cmd.exe help upgrade</pre></li>
+    </ul>
+    Or visit <a href="https://go.docuware.com/ClientSetupCmd">https://go.docuware.com/ClientSetupCmd</a>.
+    <h2>Samples</h2>
+    Some common sample commands:
+    <ul>
+        <li><pre>DocuWare.Setup.Client.Cmd.exe install --modules="AdminTool Scanner Printer Import"  --server=http://servername --orgId="00000000-0000-0000-0000-000000000000"</pre></li>
+        <li><pre>DocuWare.Setup.Client.Cmd.exe upgrade --all</pre></li>
+        <li><pre>DocuWare.Setup.Client.Cmd.exe uninstall --all</pre></li>
+    </ul>
+    Deprecated command:
+    <ul>
+        <li><pre>DocuWare.Setup.Client.Cmd.exe install --modules="AdminTool Scanner Printer Import"  --server=http://servername --orgId=1 (The Integer orgId is deprecated please use GUID as above.)</pre></li>
+    </ul>
+</body>
+</html>

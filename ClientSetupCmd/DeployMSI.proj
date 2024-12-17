@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Move out of deployment target to make use of differnt deployment more easy -->
+  <!-- This is used for MSI Deployment -->
+
+  <Target Name="_DeployRemoveDesktopFramework">
+    <!--Uninstall MSI with Upgrade Code {D11AB4FD-B244-4F29-AC0B-4C134D190220}-->
+    <UninstallModule UpgradeCode="{D11AB4FD-B244-4F29-AC0B-4C134D190220}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.Desktop.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveClientOCR">
+    <!--Uninstall MSI with Upgrade Code {628A08DB-6B0D-44E5-8E12-DB5F544A405E} - Client OCR-->
+    <UninstallModule UpgradeCode="{628A08DB-6B0D-44E5-8E12-DB5F544A405E}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.ClientOCR.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+    <!--Uninstall MSI with Upgrade Code {0956B3D3-C566-4F20-AE04-52C206AF9290} - Common OCR-->
+    <UninstallModule UpgradeCode="{0956B3D3-C566-4F20-AE04-52C206AF9290}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.CommonOCR.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" Condition="'$(CurrentInstallStateRetiredCommonOCR)'=='True'"/>
+  </Target>
+
+  <Target Name="_DeployRemoveUpdate">
+    <!--Uninstall MSI with Upgrade Code {2A720C15-6A51-4A0B-9EE7-0411544170AA}-->
+    <UninstallModule UpgradeCode="{2A720C15-6A51-4A0B-9EE7-0411544170AA}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.Update.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveC2Outlook">
+    <!--Uninstall MSI with Upgrade Code {C3F0CFB9-AFE3-4105-B0E0-AC5EAA8007AC}-->
+    <UninstallModule UpgradeCode="{C3F0CFB9-AFE3-4105-B0E0-AC5EAA8007AC}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.ConnectToOutlook.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveEditSend">
+    <!--Uninstall MSI with Upgrade Code {0A49D51B-0153-4A86-9A2E-EE6A148B791E}-->
+    <UninstallModule UpgradeCode="{0A49D51B-0153-4A86-9A2E-EE6A148B791E}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.Desktop.EditSend.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveAdminTool">
+    <!--Uninstall MSI with Upgrade Code {FC5D6495-0DD5-4F14-9AD9-A63B0D938468}-->
+    <UninstallModule UpgradeCode="{FC5D6495-0DD5-4F14-9AD9-A63B0D938468}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.AdministrationOnline.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveScanner">
+    <!--Uninstall MSI with Upgrade Code {39115FE6-CF53-46C6-99B4-B99126880004}-->
+    <UninstallModule UpgradeCode="{39115FE6-CF53-46C6-99B4-B99126880004}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.Desktop.Scanner.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveExport">
+    <!--Uninstall MSI with Upgrade Code {2751F554-C34B-460F-B8EF-2B6BC9421F86}-->
+    <UninstallModule UpgradeCode="{2751F554-C34B-460F-B8EF-2B6BC9421F86}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.Export.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveImport">
+    <!--Uninstall MSI with Upgrade Code {E4ABBAE9-BE95-4E6B-BF41-E024357010FD}-->
+    <UninstallModule UpgradeCode="{E4ABBAE9-BE95-4E6B-BF41-E024357010FD}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.Desktop.Import.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemovePrinter">
+    <!--Uninstall MSI with Upgrade Code {52AC08F3-96E0-4093-9024-FB68871D01E4}-->
+    <UninstallModule UpgradeCode="{52AC08F3-96E0-4093-9024-FB68871D01E4}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.Desktop.Printer.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveSmartConnect">
+    <!--Uninstall MSI with Upgrade Code {42B90E34-C8F6-4EAF-80E9-F1E29E4B3481}-->
+    <UninstallModule UpgradeCode="{42B90E34-C8F6-4EAF-80E9-F1E29E4B3481}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.Desktop.SmartConnect.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveWEC">
+    <CallTarget Targets="_DeployRemoveWEC32;_DeployRemoveWEC64" />
+  </Target>
+  <Target Name="_DeployRemoveWEC32" Condition="'$(Is64bitOS)'=='False'">
+    <!--Uninstall MSI with Upgrade Code {A5AA3988-3105-4D15-B456-2D89B649C216} - WEC 32-->
+    <!-- No Uninstall of WEC when upgrade from 6.5 or before -->
+    <!-- Reason: Uninstall of WEC when upgrade from 6.5 or before trigers immediate  reboot --> 
+    <UninstallModule UpgradeCode="{A5AA3988-3105-4D15-B456-2D89B649C216}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.WindowsExplorerClient.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" Condition="'$(InstalledMSIVersionRetriredWECSmaller66)'!='True'" />
+  </Target>
+  <Target Name="_DeployRemoveWEC64" Condition="'$(Is64bitOS)'=='True'">
+    <!--Uninstall MSI with Upgrade Code {E18D904C-6DA9-4653-8479-4DF808408F50} - WEC 64-->
+    <!-- No Uninstall of WEC when upgrade from 6.5 or before -->
+    <!-- Reason: Uninstall of WEC when upgrade from 6.5 or before trigers immediate  reboot -->
+    <UninstallModule UpgradeCode="{E18D904C-6DA9-4653-8479-4DF808408F50}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.WindowsExplorerClient64.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" Condition="'$(InstalledMSIVersionRetriredWECSmaller66)'!='True'" />
+  </Target>
+  
+  <Target Name="_DeployRemoveWECServer">
+    <CallTarget Targets="_DeployRemoveWECServer32;_DeployRemoveWECServer64" />
+  </Target>
+  <Target Name="_DeployRemoveWECServer32">
+    <!--Uninstall MSI with Upgrade Code {5DB16EB3-1B6A-49E3-8DBA-5C229711AD4C} - WEC Server-->
+    <UninstallModule UpgradeCode="{5DB16EB3-1B6A-49E3-8DBA-5C229711AD4C}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.WindowsExplorerClient.Server.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" Condition="'$(InstalledMSIVersionRetriredWECSmaller66)'!='True'" />
+  </Target>  
+  <Target Name="_DeployRemoveWECServer64">
+    <!--Uninstall MSI with Upgrade Code {6A9AA02F-A08C-4961-9E58-C6581B630069} - WEC Server 64-->
+    <UninstallModule UpgradeCode="{6A9AA02F-A08C-4961-9E58-C6581B630069}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.WindowsExplorerClient.Server64.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" Condition="'$(InstalledMSIVersionRetriredWECSmaller66)'!='True'" />
+  </Target>
+
+  <Target Name="_DeployRemoveWorkflowDesigner">
+    <!--Uninstall MSI with Upgrade Code {D7F87083-456D-4F1F-8AB5-A6DAFA59AD95}-->
+    <UninstallModule UpgradeCode="{D7F87083-456D-4F1F-8AB5-A6DAFA59AD95}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.WorkflowDesigner.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveUrlCreator">
+    <!--Uninstall MSI with Upgrade Code {626FBDFC-46C1-4A6F-8EF3-1550F4B537CE}-->
+    <UninstallModule UpgradeCode="{626FBDFC-46C1-4A6F-8EF3-1550F4B537CE}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.UrlCreator.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveLocalDataConnector">
+    <!--Uninstall MSI with Upgrade Code {492ABA82-A043-48C8-A99A-BEF63BA5FD12}-->
+    <UninstallModule UpgradeCode="{492ABA82-A043-48C8-A99A-BEF63BA5FD12}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.LocalDataConnector.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_DeployRemoveUserSynchronization">
+    <!--Uninstall MSI with Upgrade Code {25C2E773-F417-4ADE-9489-EDB41E900934}-->
+    <UninstallModule UpgradeCode="{25C2E773-F417-4ADE-9489-EDB41E900934}" LogFileName="$(ClientSetupLogsDirectory)\Uninstall.DocuWare.UserSynchronization.log" MsiParameters="FILEDEPLOYONLY=1" ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <Target Name="_DeployDesktopFramework" >
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirDesktopFramework)\$(DesktopFrameWorkMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Desktop" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.Desktop.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployClientOCR">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirClientOCR)\$(ClientOCRMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(CommonProgramFiles)\DocuWare\OCR" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.ClientOCR.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployUpdate">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirUpdate)\$(UpdateMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Update" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.Update.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployC2Outlook" >
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirC2Outlook)\$(C2OutlookMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Connect to Outlook" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.ConnectToOutlook.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployEditSend">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirEditSend)\$(EditSendMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Desktop" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.Desktop.EditSend.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployAdminTool">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirAdminTool)\$(AdminToolMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\AdminTool Online" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.AdministrationOnline.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployScanner">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirScanner)\$(ScannerMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Desktop" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.Desktop.Scanner.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployExport">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirExport)\$(ExportMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Export" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.Export.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployImport">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirImport)\$(ImportMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Desktop" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.Desktop.Import.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployPrinter">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirPrinter)\$(PrinterMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Desktop" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.Desktop.Printer.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeploySmartConnect">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirSmartConnect)\$(SmartConnectMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Desktop" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.Desktop.SmartConnect.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployWEC">
+    <CallTarget Targets="_DeployWEC32;_DeployWEC64" />
+  </Target>
+  <Target Name="_DeployWEC32" Condition="'$(Is64bitOS)'=='False'">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirWEC)\$(WECMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Windows Explorer Client" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.WindowsExplorerClient.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)" Condition="'$(InstalledMSIVersionRetriredWECSmaller66)'!='True'"/>
+    <!-- Different way to install WEC when upgrading from 6.5 and before -->
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirWEC)\$(WECMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus MSICLIENTUSESEXTERNALUI=1 INSTALLDIR="$(ClientSetupBaseDir)\Windows Explorer Client" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.WindowsExplorerClient.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)" Condition="'$(InstalledMSIVersionRetriredWECSmaller66)'=='True'"/>
+  </Target>
+  <Target Name="_DeployWEC64" Condition="'$(Is64bitOS)'=='True'">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirWEC)\$(WECMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir64)\Windows Explorer Client" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.WindowsExplorerClient64.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)" Condition="'$(InstalledMSIVersionRetriredWECSmaller66)'!='True'"/>
+    <!-- Different way to install WEC when upgrading from 6.5 and before -->
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirWEC)\$(WECMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus MSICLIENTUSESEXTERNALUI=1 INSTALLDIR="$(ClientSetupBaseDir64)\Windows Explorer Client" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.WindowsExplorerClient64.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)" Condition="'$(InstalledMSIVersionRetriredWECSmaller66)'=='True'"/>
+  </Target>
+  
+  <Target Name="_DeployWECServer">
+    <CallTarget Targets="_DeployWECServer32;_DeployWECServer64" />
+  </Target>
+  <Target Name="_DeployWECServer32" Condition="'$(Is64bitOS)'=='False'">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirWECServer)\$(WECServerMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Windows Explorer Client" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.WindowsExplorerClient.Server.log"'
+               Condition="'$(Is64bitOS)'=='False'" ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+  <Target Name="_DeployWECServer64" Condition="'$(Is64bitOS)'=='True'">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirWECServer)\$(WECServerMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir64)\Windows Explorer Client" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.WindowsExplorerClient.Server64.log"'
+               Condition="'$(Is64bitOS)'=='True'" ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+  
+  <Target Name="_DeployWorkflowDesigner">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirWorkflowDesigner)\$(WorkflowDesignerMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Workflow Designer" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.WorkflowDesigner.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployUrlCreator">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirUrlCreator)\$(UrlCreatorMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\URL Creator" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.UrlCreator.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployLocalDataConnector">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirLocalDataConnector)\$(LocalDataConnectorMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\Local Data Connector" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.LocalDataConnector.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_DeployUserSynchronization">
+    <SmartExec Command='"$(MSIExec)" /i "$(DownloadDirUserSynchronization)\$(UserSynchronizationMSIName)" /qn FILEDEPLOYONLY=1 REINSTALLMODE=amus INSTALLDIR="$(ClientSetupBaseDir)\User Synchronization" /norestart /lvoicewarmup "$(ClientSetupLogsDirectory)\Install.DocuWare.UserSynchronization.log"'
+               ContinueOnError="ErrorAndContinue" SuccessExitCodes="$(MSISuccessExitCodes)"/>
+  </Target>
+
+</Project>

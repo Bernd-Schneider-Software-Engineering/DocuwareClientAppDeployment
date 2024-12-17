@@ -1,0 +1,7 @@
+﻿/nologo
+/consoleloggerparameters:NoSummary;Verbosity=Detailed
+/fileLogger1
+/fileloggerparameters1:LogFile="%ProgramData%\DocuWare\ClientSetup\DetailedLog.log";Verbosity=Detailed
+/l:CsvLogger,DocuWare.Setup.Common.MSBuild.dll;logfile="%ProgramData%\DocuWare\ClientSetup\ErrorSummary.csv"
+/l:PerformanceLogger,DocuWare.Setup.Common.MSBuild.dll;logfile="%ProgramData%\DocuWare\ClientSetup\PerformanceSummary.csv"
+/l:SecureFileLogger,DocuWare.Setup.Common.MSBuild.dll;logfile="%ProgramData%\DocuWare\ClientSetup\SecureLog.log";rulefile=SecureFileLogger.rules;Append=true

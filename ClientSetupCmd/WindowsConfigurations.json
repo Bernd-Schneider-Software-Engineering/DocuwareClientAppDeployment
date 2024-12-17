@@ -1,0 +1,169 @@
+{
+  "WhiteListedWindowsVersions": [
+    {
+      "OSName": "Windows_10",
+      "OSEdition": "Enterprise",
+      "IsServer": false,
+      "SupportedVersions": [
+        {
+          "OSBuildName": "22H2",
+          "OSBuildNumber": "19045",
+          "AvailabilityDate": "2022-10-18T00:00:00",
+          "EndOfServiceDate": "2025-10-14T00:00:00"
+        },
+        {
+          "OSBuildName": "21H2",
+          "OSBuildNumber": "19044",
+          "AvailabilityDate": "2021-11-16T00:00:00",
+          "EndOfServiceDate": "2024-06-11T00:00:00"
+        },
+        {
+          "OSBuildName": "21H1",
+          "OSBuildNumber": "19043",
+          "AvailabilityDate": "2021-05-18T00:00:00",
+          "EndOfServiceDate": "2022-12-13T00:00:00"
+        },
+        {
+          "OSBuildName": "20H2",
+          "OSBuildNumber": "19042",
+          "AvailabilityDate": "2020-10-20T00:00:00",
+          "EndOfServiceDate": "2023-05-09T00:00:00"
+        }
+      ]
+    },
+    {
+      "OSName": "Windows_11",
+      "OSEdition": "Enterprise",
+      "IsServer": false,
+      "SupportedVersions": [
+        {
+          "OSBuildName": "21H2",
+          "OSBuildNumber": "22000",
+          "AvailabilityDate": "2021-10-04T00:00:00",
+          "EndOfServiceDate": "2024-10-08T00:00:00"
+        },
+        {
+          "OSBuildName": "22H2",
+          "OSBuildNumber": "22621",
+          "AvailabilityDate": "2022-09-20T00:00:00",
+          "EndOfServiceDate": "2025-10-15T00:00:00"
+        },
+        {
+          "OSBuildName": "22H2",
+          "OSBuildNumber": "22621.963",
+          "AvailabilityDate": "2022-09-20T00:00:00",
+          "EndOfServiceDate": "2025-10-15T00:00:00"
+        },
+        {
+          "OSBuildName": "23H2",
+          "OSBuildNumber": "22631",
+          "AvailabilityDate": "2023-10-31T00:00:00",
+          "EndOfServiceDate": "2026-11-10T00:00:00"
+        }
+      ]
+    },
+    {
+      "OSName": "WindowsServer_2016",
+      "OSEdition": "Datacenter",
+      "IsServer": true,
+      "SupportedVersions": [
+        {
+          "OSBuildName": "1607",
+          "OSBuildNumber": "14393",
+          "AvailabilityDate": "2016-10-15T00:00:00",
+          "EndOfServiceDate": "2027-01-12T00:00:00"
+        }
+      ]
+    },
+    {
+      "OSName": "WindowsServer_2016",
+      "OSEdition": "Standard",
+      "IsServer": true,
+      "SupportedVersions": [
+        {
+          "OSBuildName": "1607",
+          "OSBuildNumber": "14393",
+          "AvailabilityDate": "2016-10-15T00:00:00",
+          "EndOfServiceDate": "2027-01-12T00:00:00"
+        }
+      ]
+    },
+    {
+      "OSName": "WindowsServer_2019",
+      "OSEdition": "Datacenter",
+      "IsServer": true,
+      "SupportedVersions": [
+        {
+          "OSBuildName": "LTSC 1809",
+          "OSBuildNumber": "17763.107",
+          "AvailabilityDate": "2018-11-13T00:00:00",
+          "EndOfServiceDate": "2029-01-09T00:00:00"
+        },
+        {
+          "OSBuildName": "LTSC 1809",
+          "OSBuildNumber": "17763",
+          "AvailabilityDate": "2018-11-13T00:00:00",
+          "EndOfServiceDate": "2029-01-09T00:00:00"
+        }
+      ]
+    },
+    {
+      "OSName": "WindowsServer_2019",
+      "OSEdition": "Standard",
+      "IsServer": true,
+      "SupportedVersions": [
+        {
+          "OSBuildName": "LTSC 1809",
+          "OSBuildNumber": "17763.107",
+          "AvailabilityDate": "2018-11-13T00:00:00",
+          "EndOfServiceDate": "2029-01-09T00:00:00"
+        },
+        {
+          "OSBuildName": "LTSC 1809",
+          "OSBuildNumber": "17763",
+          "AvailabilityDate": "2018-11-13T00:00:00",
+          "EndOfServiceDate": "2029-01-09T00:00:00"
+        }
+      ]
+    },
+    {
+      "OSName": "WindowsServer_2022",
+      "OSEdition": "Datacenter",
+      "IsServer": true,
+      "SupportedVersions": [
+        {
+          "OSBuildName": "LTSC",
+          "OSBuildNumber": "20348.169",
+          "AvailabilityDate": "2021-08-18T00:00:00",
+          "EndOfServiceDate": "2031-10-14T00:00:00"
+        },
+        {
+          "OSBuildName": "LTSC",
+          "OSBuildNumber": "20348",
+          "AvailabilityDate": "2021-08-18T00:00:00",
+          "EndOfServiceDate": "2031-10-14T00:00:00"
+        }
+      ]
+    },
+    {
+      "OSName": "WindowsServer_2022",
+      "OSEdition": "Standard",
+      "IsServer": true,
+      "SupportedVersions": [
+        {
+          "OSBuildName": "LTSC",
+          "OSBuildNumber": "20348.169",
+          "AvailabilityDate": "2021-08-18T00:00:00",
+          "EndOfServiceDate": "2031-10-14T00:00:00"
+        },
+        {
+          "OSBuildName": "LTSC",
+          "OSBuildNumber": "20348",
+          "AvailabilityDate": "2021-08-18T00:00:00",
+          "EndOfServiceDate": "2031-10-14T00:00:00"
+        }
+      ]
+    }
+  ]
+}
+docuware.signature=QzRFQjM3NUU5QkQyNERDNThDQzk4QTUwRkFCQjFCQ0IuOTBFNzZGNjFBMkJDQzE4MjBGOTY2NTIxRTk1Mzc0Rjg0RkMxOTVDMDEwMzJCNTBCOUEyQUZBMDAxNzc0N0MyNS42MzI4RDFDMjNBOEU2NzM3QkUyMThGM0YwRDRCNDQ5OENFMUQxMkJBOTE0RkYwNThDRUI5NDNFN0I0RjBGMjND

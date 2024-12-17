@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Overwrite all Initializations and Un-Initialization Targets for DocuWare Components to execute them -->
+  <!-- This will be used when Initialization is needed -->
+  
+  
+
+  <Target Name="_InitRemoveDesktopFramework">
+    <SmartExec Command='"$(SC)" delete DWDesktopService'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScDeleteSuccessExitCodes)"/>
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Desktop\DocuWare Desktop Apps.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Desktop\DocuWare Desktop Apps.lnk')" />
+    <Delete Files="$(PublicDesktopFolder)\DocuWare Desktop Apps.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(PublicDesktopFolder)\DocuWare Desktop Apps.lnk')" />
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\Startup\DocuWare Desktop Apps.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\Startup\DocuWare Desktop Apps.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Desktop"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Desktop')" />
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+    <SmartExec Command='"$(Netsh)" http delete urlacl url=http://+:8090/'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(NetshDeleteSuccessExitCodes)" />
+    <SmartExec Command='"$(Netsh)" http delete urlacl url=https://+:8091/'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(NetshDeleteSuccessExitCodes)" />
+    <SmartExec Command='"$(Netsh)" http delete urlacl url=http://+:8109/'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(NetshDeleteSuccessExitCodes)" />
+    <SmartExec Command='"$(Netsh)" http delete urlacl url=http://+:8110/'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(NetshDeleteSuccessExitCodes)" />
+  </Target>
+
+
+  <Target Name="_InitRemoveClientOCR">
+    <SmartExec Command='"$(Reg)" delete HKLM\Software\DocuWare\Common /v Client_OCR_path /f /reg:32'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(RegDeleteSuccessExitCodes)" />
+  </Target>
+
+  <Target Name="_InitRemoveUpdate">
+    <SmartExec Command='"$(SC)" delete DWClientUpdateService'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScDeleteSuccessExitCodes)"/>
+    <SmartExec Command='"$(Schtasks)" /DELETE /TN "DocuWare Update" /f'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(SchtasksUninstallSuccessExitCodes)" />
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Check for DocuWare Updates.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Check for DocuWare Updates.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+  </Target>
+
+  <Target Name="_InitRemoveC2Outlook">
+    <SmartExec Command='"$(ClientSetupBaseDir)\CONNECT to Outlook\adxregistrator.exe" uninstall="DocuWare.CONNECTtoOutlook.dll" /privileges=admin /LogFileLocation="$(ClientSetupLogsDirectory)\Uninstall.CONNECTtoOutlook_Registrator.log"'
+               ContinueOnError="ErrorAndContinue"
+               Condition="Exists('$(ClientSetupBaseDir)\CONNECT to Outlook\adxregistrator.exe')" />
+  </Target>
+
+  <Target Name="_InitRemoveEditSend">
+  </Target>
+
+  <Target Name="_InitRemoveAdminTool">
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration\DocuWare Administration.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration\DocuWare Administration.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration')" />
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+  </Target>
+
+  <Target Name="_InitRemoveScanner">
+  </Target>
+
+  <Target Name="_InitRemoveImport">
+  </Target>
+
+  <Target Name="_InitRemovePrinter">
+    <SmartExec Command='"$(ClientSetupBaseDir)\Desktop\DocuWare.Printer.Setup.exe" /u'
+               ContinueOnError="ErrorAndContinue"
+               Condition="Exists('$(ClientSetupBaseDir)\Desktop\DocuWare.Printer.Setup.exe') "/>
+  </Target>
+
+  <Target Name="_InitRemoveSmartConnect">
+  </Target>
+
+  <Target Name="_InitRemoveWEC">
+      <!--new unregister with batch file-->
+      <SmartExec Command='"$(ClientSetupBaseDir64)\Windows Explorer Client\UnregisterWindowsExplorerClient.bat"'
+                 ContinueOnError="ErrorAndContinue"
+                 SuccessExitCodes="$(RegisterWEClientExitCodes)"
+                 Condition="Exists('$(ClientSetupBaseDir64)\Windows Explorer Client\UnregisterWindowsExplorerClient.bat') AND '$(Is64bitOS)'=='True'" />
+      <SmartExec Command='"$(ClientSetupBaseDir)\Windows Explorer Client\UnregisterWindowsExplorerClient.bat"'
+                 ContinueOnError="ErrorAndContinue"
+                 SuccessExitCodes="$(RegisterWEClientExitCodes)"
+                 Condition="Exists('$(ClientSetupBaseDir)\Windows Explorer Client\UnregisterWindowsExplorerClient.bat') AND '$(Is64bitOS)'=='False'" />
+    <!--x64 shell extension must be unregistered only on 64 bit OS-->
+    <SmartExec Command='"$(Regsvr)" /s /u "$(ClientSetupBaseDir64)\Windows Explorer Client\ShellBoost.a4954890e003492193b77336c9bcbc48.x64.dll"'
+           ContinueOnError="ErrorAndContinue"
+           SuccessExitCodes="$(RegsvrSuccessExitCodes)"
+           Condition="('$(Is64bitOS)'=='True') AND (Exists('$(ClientSetupBaseDir64)\Windows Explorer Client\ShellBoost.a4954890e003492193b77336c9bcbc48.x64.dll'))"/>
+    <!--x86 shell extension must be unregistered on both x86 and x64-->    
+    <SmartExec Command='"$(Regsvr)" /s /u "$(ClientSetupBaseDir64)\Windows Explorer Client\ShellBoost.a4954890e003492193b77336c9bcbc48.x86.dll"'
+           ContinueOnError="ErrorAndContinue"
+           SuccessExitCodes="$(RegsvrSuccessExitCodes)"
+           Condition="('$(Is64bitOS)'=='True') AND (Exists('$(ClientSetupBaseDir64)\Windows Explorer Client\ShellBoost.a4954890e003492193b77336c9bcbc48.x86.dll'))"/>
+    <SmartExec Command='"$(Regsvr)" /s /u "$(ClientSetupBaseDir)\Windows Explorer Client\ShellBoost.a4954890e003492193b77336c9bcbc48.x86.dll"'
+           ContinueOnError="ErrorAndContinue"
+           SuccessExitCodes="$(RegsvrSuccessExitCodes)"
+           Condition="('$(Is64bitOS)'=='False') AND (Exists('$(ClientSetupBaseDir)\Windows Explorer Client\ShellBoost.a4954890e003492193b77336c9bcbc48.x86.dll'))"/>
+    
+    <SmartExec Command='"$(ClientSetupBaseDir)\Windows Explorer Client\RegisterExtensionDotNet40.exe" -u DocuWare.WindowsExplorerClient.dll'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(RegisterExtensionDotNet40SuccessExitCodes)"
+               Condition="('$(Is64bitOS)'=='False') AND (Exists('$(ClientSetupBaseDir)\Windows Explorer Client\RegisterExtensionDotNet40.exe'))" />
+    <SmartExec Command='"$(ClientSetupBaseDir64)\Windows Explorer Client\RegisterExtensionDotNet40_x86.exe" -u DocuWare.WindowsExplorerClient.dll'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(RegisterExtensionDotNet40SuccessExitCodes)"
+               Condition="('$(Is64bitOS)'=='True') AND (Exists('$(ClientSetupBaseDir64)\Windows Explorer Client\RegisterExtensionDotNet40.exe'))" />
+    <SmartExec Command='"$(ClientSetupBaseDir64)\Windows Explorer Client\RegisterExtensionDotNet40.exe" -u DocuWare.WindowsExplorerClient.dll'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(RegisterExtensionDotNet40SuccessExitCodes)"
+               Condition="('$(Is64bitOS)'=='True') AND (Exists('$(ClientSetupBaseDir64)\Windows Explorer Client\RegisterExtensionDotNet40.exe'))" />
+  </Target>
+
+  <Target Name="_InitRemoveWECServer">
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Start Windows Explorer Client Background Process.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Start Windows Explorer Client Background Process.lnk')" />
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\StartUp\Start Windows Explorer Client Background Process.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\StartUp\Start Windows Explorer Client Background Process.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+  </Target>
+
+  <Target Name="_InitRemoveWorkflowDesigner">
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration\DocuWare Workflow Designer.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration\DocuWare Workflow Designer.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration')" />
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+  </Target>
+
+  <Target Name="_InitRemoveUrlCreator">
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\DocuWare URL Creator.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\DocuWare URL Creator.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+  </Target>
+
+  <Target Name="_InitRemoveExport">
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\DocuWare Export.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\DocuWare Export.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+
+    <!--Uninstall Scheduled Tasks-->
+    <SmartExec Command='"$(ClientSetupBaseDir)\Export\DocuWare.Export.exe" tasksremoval'
+               ContinueOnError="ErrorAndContinue"
+               Condition="Exists('$(ClientSetupBaseDir)\Export\DocuWare.Export.exe') AND '$(Export)'=='False' AND '$(CurrentInstallStateExport)'=='True' "/>
+  </Target>
+
+  <Target Name="_InitRemoveLocalDataConnector">
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Local Data Connector Administration.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Local Data Connector Administration.lnk')" />
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\DocuWare Local Data Connector.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\DocuWare Local Data Connector.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+    <SmartExec Command='"$(SC)" delete DWLocalDataConnector'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScDeleteSuccessExitCodes)"/>
+  </Target>
+
+  <Target Name="_InitRemoveUserSynchronization">
+    <!-- Remove Shortcut -->
+    <Delete Files="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\DocuWare User Synchronization.lnk"
+            ContinueOnError="ErrorAndContinue"
+            Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\DocuWare User Synchronization.lnk')" />
+    <!--Delete StartMenu Shortcut folders if emtpy-->
+    <Exec Command='rmdir "$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"'
+          ContinueOnError="ErrorAndContinue"
+          Condition="Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')" />
+  </Target>
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <Target Name="_InitDesktopFramework">
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Desktop'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Desktop')"
+             ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare Desktop Apps"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Desktop"
+                     TargetFilePath="$(ClientSetupBaseDir)\Desktop\DocuWare.Desktop.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Desktop"
+                     ShortcutDescription="DocuWare Desktop Apps"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Desktop\DocuWare.Desktop.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare Desktop Apps"
+                     ShortcutPath="$(PublicDesktopFolder)"
+                     TargetFilePath="$(ClientSetupBaseDir)\Desktop\DocuWare.Desktop.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Desktop"
+                     ShortcutDescription="DocuWare Desktop Apps"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Desktop\DocuWare.Desktop.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare Desktop Apps"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\Startup"
+                     TargetFilePath="$(ClientSetupBaseDir)\Desktop\DocuWare.Desktop.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Desktop"
+                     ShortcutDescription="DocuWare Desktop Apps"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Desktop\DocuWare.Desktop.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+    <SmartExec Command='"$(SC)" create DWDesktopService binPath= "\"$(ClientSetupBaseDir)\Desktop\DocuWare.DesktopService.exe\"" DisplayName= "DocuWare Desktop Service" start= "auto"'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScCreateSuccessExitCodes)" />
+    <SmartExec Command='"$(SC)" description DWDesktopService "DocuWare Desktop Service"'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScCreateSuccessExitCodes)" />
+    <Exec Command='"$(Netsh)" http add urlacl url=http://+:8090/ sddl=D:(A;;GX;;;S-1-1-0)'
+          ContinueOnError="ErrorAndContinue" />
+    <Exec Command='"$(Netsh)" http add urlacl url=https://+:8091/ sddl=D:(A;;GX;;;S-1-1-0)'
+          ContinueOnError="ErrorAndContinue" />
+    <Exec Command='"$(Netsh)" http add urlacl url=http://+:8109/ sddl=D:(A;;GX;;;S-1-1-0)'
+          ContinueOnError="ErrorAndContinue" />
+    <Exec Command='"$(Netsh)" http add urlacl url=http://+:8110/ sddl=D:(A;;GX;;;S-1-1-0)'
+          ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_InitClientOCR">
+    <!--Create Registry Key  for Common OCR-->
+    <SmartExec Command='"$(Reg)" add HKLM\Software\DocuWare\Common /v Client_OCR_path /t REG_SZ /d "$(CommonProgramFiles)\DocuWare\OCR\\" /f /reg:32'
+               ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_InitUpdate">
+    <SmartExec Command='"$(SC)" create DWClientUpdateService binPath= "\"$(ClientSetupBaseDir)\Update\DocuWare.Setup.Client.Service.exe\"" DisplayName= "DocuWare Desktop Apps Update Service" start= "auto"'
+               Condition="'$(IsTerminalServer)'=='False'"
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScCreateSuccessExitCodes)" />
+    <SmartExec Command='"$(SC)" description DWClientUpdateService "DocuWare Desktop Apps Update Service"'
+               Condition="'$(IsTerminalServer)'=='False'"
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScCreateSuccessExitCodes)" />
+    <SmartExec Command='"$(SC)" sdset DWClientUpdateService "D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;IU)(A;;CCLCSWLOCRRC;;;SU)(A;;RP;;;AU)S:(AU;FA;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;WD)"'
+               Condition="'$(IsTerminalServer)'=='False'"
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScCreateSuccessExitCodes)" />
+    <SmartExec Command='"$(Schtasks)" /CREATE /TN "DocuWare Update" /xml "$(ClientSetupBaseDir)\Update\DocuWare Update.xml" /f'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(SchtasksSuccessExitCodes)"
+               Condition="'$(Is64bitOS)'=='False'"/>
+    <SmartExec Command='"$(Schtasks)" /CREATE /TN "DocuWare Update" /xml "$(ClientSetupBaseDir)\Update\DocuWare Update64.xml" /f'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(SchtasksSuccessExitCodes)"
+               Condition="'$(Is64bitOS)'=='True'"/>
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')"
+             ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="Check for DocuWare Updates"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"
+                     TargetFilePath="$(ClientSetupBaseDir)\Update\DocuWare.Setup.Client.Update.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Update"
+                     ShortcutDescription="Check for DocuWare Updates"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Update\DocuWare.Setup.Client.Update.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_InitC2Outlook">
+    <SmartExec Command='"$(ClientSetupBaseDir)\CONNECT to Outlook\adxregistrator.exe" install="DocuWare.CONNECTtoOutlook.dll" /privileges=admin /LogFileLocation="$(ClientSetupLogsDirectory)\Install.CONNECTtoOutlook_Registrator.log"'
+               ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_InitEditSend">
+  </Target>
+
+  <Target Name="_InitAdminTool">
+    <CreateAdminToolSettingFile SettingsPath="$(SettingsPath)" 
+                                MSIUrl="$(AdminToolMsiUrl)" 
+                                InstallPath="$(ClientSetupBaseDir)\AdminTool Online" 
+                                ContinueOnError="ErrorAndContinue" 
+                                Condition="!Exists('$(ClientSetupBaseDir)\AdminTool Online\DocuWare.Administration.exe.settings')"/>
+    <MergeAdminToolSettingFile SettingsPath="$(SettingsPath)"
+                               MSIUrl="$(AdminToolMsiUrl)"
+                               InstallPath="$(ClientSetupBaseDir)\AdminTool Online"
+                               ContinueOnError="ErrorAndContinue"
+                               Condition="Exists('$(ClientSetupBaseDir)\AdminTool Online\DocuWare.Administration.exe.settings')"/>
+
+    <!-- Grant Write rights to the AdminTool settings file -->
+    <SmartExec Command='"$(Icacls)" "$(ClientSetupBaseDir)\AdminTool Online\DocuWare.Administration.exe.settings" /grant "*S-1-1-0":M'
+               ContinueOnError="ErrorAndContinue" />
+    <!-- Create shortcut -->
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration')"
+             ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare Administration"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration"
+                     TargetFilePath="$(ClientSetupBaseDir)\AdminTool Online\DocuWare.Administration.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\AdminTool Online"
+                     ShortcutDescription="Docuware Administration"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\AdminTool Online\DocuWare.Administration.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_InitScanner">
+  </Target>
+
+  <Target Name="_InitImport">
+  </Target>
+
+  <Target Name="_InitPrinter">
+    <SmartExec Command='"$(ClientSetupBaseDir)\Desktop\DocuWare.Printer.Setup.exe" /i'
+               ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_InitSmartConnect">
+  </Target>
+
+  <Target Name="_InitWEC">
+      <SmartExec Command='"$(ClientSetupBaseDir64)\Windows Explorer Client\RegisterWindowsExplorerClient.bat"'
+                 ContinueOnError="ErrorAndContinue"
+                 SuccessExitCodes="$(RegisterWEClientExitCodes)"
+                 Condition="Exists('$(ClientSetupBaseDir64)\Windows Explorer Client\RegisterWindowsExplorerClient.bat') AND '$(Is64bitOS)'=='True'" />
+      <SmartExec Command='"$(ClientSetupBaseDir)\Windows Explorer Client\RegisterWindowsExplorerClient.bat"'
+                 ContinueOnError="ErrorAndContinue"
+                 SuccessExitCodes="$(RegisterWEClientExitCodes)"
+                 Condition="Exists('$(ClientSetupBaseDir)\Windows Explorer Client\RegisterWindowsExplorerClient.bat') AND '$(Is64bitOS)'=='False'" />
+  </Target>
+
+  <Target Name="_InitWECServer">
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')"
+             ContinueOnError="ErrorAndContinue" />
+    <!-- Shortcuts for Manual startup if needed -->
+    <ShortcutHandler ShortcutName="Start Windows Explorer Client Background Process"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"
+                     TargetFilePath="$(ClientSetupBaseDir)\Windows Explorer Client\DocuWare.WindowsExplorerClient.ServerComponent.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Windows Explorer Client"
+                     ShortcutDescription="Start Windows Explorer Client Background Process"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Windows Explorer Client\DocuWare.WindowsExplorerClient.ServerComponent.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" 
+                     Condition="'$(Is64bitOS)'=='False'" />
+    <ShortcutHandler ShortcutName="Start Windows Explorer Client Background Process"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"
+                     TargetFilePath="$(ClientSetupBaseDir64)\Windows Explorer Client\DocuWare.WindowsExplorerClient.ServerComponent.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir64)\Windows Explorer Client"
+                     ShortcutDescription="Start Windows Explorer Client Background Process"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir64)\Windows Explorer Client\DocuWare.WindowsExplorerClient.ServerComponent.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue"
+                     Condition="'$(Is64bitOS)'=='True'" />
+    <!-- Shortcuts for automatic startup-->
+    <ShortcutHandler ShortcutName="Start Windows Explorer Client Background Process"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\StartUp"
+                     TargetFilePath="$(ClientSetupBaseDir)\Windows Explorer Client\DocuWare.WindowsExplorerClient.ServerComponent.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Windows Explorer Client"
+                     ShortcutDescription="Start Windows Explorer Client Background Process"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Windows Explorer Client\DocuWare.WindowsExplorerClient.ServerComponent.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue"
+                     Condition="'$(Is64bitOS)'=='False'" />
+    <ShortcutHandler ShortcutName="Start Windows Explorer Client Background Process"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\StartUp"
+                     TargetFilePath="$(ClientSetupBaseDir64)\Windows Explorer Client\DocuWare.WindowsExplorerClient.ServerComponent.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir64)\Windows Explorer Client"
+                     ShortcutDescription="Start Windows Explorer Client Background Process"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir64)\Windows Explorer Client\DocuWare.WindowsExplorerClient.ServerComponent.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue"
+                     Condition="'$(Is64bitOS)'=='True'" />
+  </Target>
+
+  <Target Name="_InitWorkflowDesigner">
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration')"
+             ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare Workflow Designer"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare\Configuration"
+                     TargetFilePath="$(ClientSetupBaseDir)\Workflow Designer\DocuWare.Bpw.Designer.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Workflow Designer"
+                     ShortcutDescription="DocuWare Workflow Designer"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Workflow Designer\DocuWare.Bpw.Designer.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+  </Target>
+  
+  <Target Name="_InitUrlCreator">
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')"
+             ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare URL Creator"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"
+                     TargetFilePath="$(ClientSetupBaseDir)\URL Creator\DocuWare.URLCreator.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\URL Creator"
+                     ShortcutDescription="DocuWare URL Creator"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\URL Creator\DocuWare.URLCreator.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_InitExport">
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')"
+             ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare Export"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"
+                     TargetFilePath="$(ClientSetupBaseDir)\Export\DocuWare.Export.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Export"
+                     ShortcutDescription="DocuWare Export"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Export\DocuWare.Export.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+  <Target Name="_InitLocalDataConnector">
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')"
+             ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare Local Data Connector"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"
+                     TargetFilePath="$(ClientSetupBaseDir)\Local Data Connector\Local Data Connector Administration.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\Local Data Connector"
+                     ShortcutDescription="DocuWare Local Data Connector Administration"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\Local Data Connector\Local Data Connector Administration.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+    <SmartExec Command='"$(SC)" create DWLocalDataConnector binPath= "\"$(ClientSetupBaseDir)\Local Data Connector\Local Data Connector Service.exe\"" DisplayName= "DocuWare Local Data Connector" start= "auto"'
+               ContinueOnError="ErrorAndContinue"
+               SuccessExitCodes="$(ScCreateSuccessExitCodes)" />
+    <SmartExec Command='"$(SC)" description DWLocalDataConnector "DocuWare Local Data Connector"'
+               SuccessExitCodes="$(ScCreateSuccessExitCodes)" />
+  </Target>
+
+  <Target Name="_InitUserSynchronization">
+    <MakeDir Directories='$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare'
+             Condition="!Exists('$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare')"
+             ContinueOnError="ErrorAndContinue" />
+    <ShortcutHandler ShortcutName="DocuWare User Synchronization"
+                     ShortcutPath="$(AllUsersProfile)\Microsoft\Windows\Start Menu\Programs\DocuWare"
+                     TargetFilePath="$(ClientSetupBaseDir)\User Synchronization\DocuWare.ADSync.exe"
+                     WorkingDirectory="$(ClientSetupBaseDir)\User Synchronization"
+                     ShortcutDescription="DocuWare User Synchronization"
+                     ShortcutIconfilePath="$(ClientSetupBaseDir)\User Synchronization\DocuWare.ADSync.exe"
+                     ShortcutIconfileIndex="0"
+                     Overwrite="True"
+                     ContinueOnError="ErrorAndContinue" />
+  </Target>
+
+</Project>

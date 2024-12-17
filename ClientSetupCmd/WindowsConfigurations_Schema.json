@@ -1,0 +1,105 @@
+{
+  "definitions": {
+    "WindowsOS": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "OSName": {
+          "type": "string",
+          "enum": [
+            "Windows_XP",
+            "Windows_Vista",
+            "Windows_7",
+            "Windows_8",
+            "Windows_81",
+            "Windows_10",
+            "Windows_11",
+            "WindowsServer_2012R2",
+            "WindowsServer_2016",
+            "WindowsServer_2019",
+            "WindowsServer_2022"
+          ]
+        },
+        "OSEdition": {
+          "type": "string",
+          "enum": [
+            "Enterprise",
+            "Education",
+            "IOT_Enterprise",
+            "Home",
+            "Pro",
+            "Pro_Education",
+            "Pro_For_Workstations",
+            "Datacenter",
+            "Standard",
+            "Essentials"
+          ]
+        },
+        "IsServer": {
+          "type": "boolean"
+        },
+        "SupportedVersions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WindowsOSSupportedBuild"
+          }
+        }
+      },
+      "required": [
+        "OSName",
+        "OSEdition",
+        "IsServer",
+        "SupportedVersions"
+      ]
+    },
+    "WindowsOSSupportedBuild": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "OSBuildName": {
+          "type": "string"
+        },
+        "OSBuildNumber": {
+          "type": "string"
+        },
+        "AvailabilityDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "EndOfServiceDate": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "OSBuildName",
+        "OSBuildNumber",
+        "AvailabilityDate",
+        "EndOfServiceDate"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "WhiteListedWindowsVersions": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/definitions/WindowsOS"
+      }
+    }
+  },
+  "required": [
+    "WhiteListedWindowsVersions"
+  ]
+}
+docuware.signature=MUExMTUxRDlDRUUwNEM0MTg2NzNBMzkzM0VGQTczRUIuOEFBOTQzRkE1QTREOUQwMTVCQ0Y0NzQxMUJDNTJGQTRBNEY5MTIxODU5QjE3ODlCNEZENzRDNTUxMEY3MkM3My42OTQ4NjZERDU3QjRGNjBBRjg1QURCQ0YyQjQ3RjM2RjgxQzc3NjU4MEYzQ0ZDMzRGNTQ5NDQyODFDQjQzNkZC
